@@ -284,6 +284,6 @@ Module.expectedDataFileDownloads++;
     }
 
   }
-  loadPackage({"package_uuid":"93697af0-39f2-4132-9ae9-3d3126498a9b","remote_package_size":9614145,"files":[{"filename":"/game.love","crunched":0,"start":0,"end":9614145,"audio":false}]});
+  loadPackage({"package_uuid":"c1efa207-e8b5-422b-959e-be6ded152bf7","remote_package_size":9614211,"files":[{"filename":"/game.love","crunched":0,"start":0,"end":9614211,"audio":false}]});
 
 })();
