@@ -10,8 +10,8 @@
     <style>
   :root{--bg:#F3B169}
   html,body{margin:0;height:100%;background:#2B2420;overflow:hidden;touch-action:none}
-  #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
-  canvas{display:block;height:min(100vh,calc(100vw*844/390));width:auto;aspect-ratio:390/844;touch-action:none}
+  #wrap{position:fixed;left:0;top:0;right:0;height:100%;display:flex;align-items:center;justify-content:center}
+  canvas{display:block;touch-action:none}
   #loadingCanvas{background:#FDF5E8}
 </style>
   </head>
@@ -19,6 +19,17 @@
     <div id="wrap"><canvas id="loadingCanvas" oncontextmenu="event.preventDefault()" width="390" height="844"></canvas>
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas></div>
 <script type='text/javascript'>
+      // 화면 맞춤: 지금 보이는 영역(주소창·툴바 제외)의 비율로 게임 높이를 정함 (폭 390 고정, 높이 640~1000)
+      // → 휴대폰에서 위아래·좌우가 잘리지 않고 꽉 참. 크기가 바뀌면(회전·툴바) 다시 맞춤
+      function viewSize(){ var v = window.visualViewport; return {w: v ? v.width : window.innerWidth, h: v ? v.height : window.innerHeight}; }
+      var GAME_H = (function(){ var s = viewSize(); return Math.max(640, Math.min(1000, Math.round(390 * s.h / s.w))); })();
+      var fitStyle = document.createElement('style'); document.head.appendChild(fitStyle);
+      function fitCanvas(){ var s = viewSize(); var k = Math.min(s.w / 390, s.h / GAME_H);
+        var w = Math.floor(390 * k), h = Math.floor(GAME_H * k);
+        document.getElementById('wrap').style.height = s.h + 'px';
+        fitStyle.textContent = 'canvas{width:' + w + 'px!important;height:' + h + 'px!important}'; }
+      fitCanvas(); window.addEventListener('resize', fitCanvas); if (window.visualViewport) window.visualViewport.addEventListener('resize', fitCanvas);
+      document.getElementById('loadingCanvas').height = GAME_H;
       function goFullScreen(){
             var canvas = document.getElementById("canvas");
             if(canvas.requestFullScreen)
@@ -60,7 +71,7 @@
       }, false);
 
       var Module = {
-        arguments: ["./game.love"],
+        arguments: ["./game.love", "--vh", String(GAME_H)],
         INITIAL_MEMORY: 67108864,
         printErr: console.error.bind(console),
         canvas: (function() {
